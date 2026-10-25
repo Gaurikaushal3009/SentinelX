@@ -1,0 +1,400 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0b1220">
+
+    <title>SentinelX | Threat Monitoring</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-container">
+
+        <!-- ================= SIDEBAR ================= -->
+        <aside class="sidebar" id="sidebar">
+
+            <!-- Brand -->
+            <div class="brand">
+                <div class="brand-icon">S</div>
+
+                <div>
+                    <h2>SentinelX</h2>
+                    <p>Security Intelligence</p>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <p class="nav-heading">WORKSPACE</p>
+
+            <nav aria-label="Main navigation">
+                <a href="#overview" class="nav-link active">
+                    ◈ Overview
+                </a>
+
+                <a href="#analyzeThreat" class="nav-link">
+                    ⌕ Analyze Request
+                </a>
+
+                <a href="#threatHistory" class="nav-link">
+                    ▤ Threat History
+                </a>
+
+                <a href="#about" class="nav-link">
+                    ⓘ About SentinelX
+                </a>
+            </nav>
+
+            <!-- Threat Alerts Panel -->
+            <section
+                id="sentinelAlertPanel"
+                class="sentinel-alert-panel"
+                aria-label="High severity threat alerts">
+
+                <h2 class="sentinel-alert-heading">
+                    Threat Alerts
+                </h2>
+
+                <p
+                    class="sentinel-alert-status"
+                    id="sentinelAlertStatus"
+                    role="status">
+                    Checking threats...
+                </p>
+
+                <!-- Alert cards are inserted here by script.js -->
+                <div
+                    id="sentinelAlertList"
+                    class="sentinel-alert-list"
+                    aria-live="polite">
+                </div>
+            </section>
+
+            <!-- Sidebar Footer -->
+            <div class="sidebar-bottom">
+                <span class="status-dot"></span>
+                <span>Monitoring Dashboard</span>
+            </div>
+
+        </aside>
+
+        <!-- ================= MAIN CONTENT ================= -->
+        <main class="main-content">
+
+            <!-- Top Header -->
+            <header class="topbar">
+                <div>
+                    <p class="eyebrow">SECURITY CENTER</p>
+
+                    <h1 id="overview">
+                        Threat Overview
+                    </h1>
+
+                    <p class="subtitle">
+                        Monitor and analyze suspicious request activity.
+                    </p>
+                </div>
+
+                <div
+                    id="connectionStatus"
+                    class="connection-status"
+                    role="status"
+                    aria-live="polite">
+
+                    <span class="status-dot"></span>
+                    Connecting to API...
+                </div>
+            </header>
+
+            <!-- Welcome Banner -->
+            <section class="welcome-banner">
+                <div>
+                    <p class="banner-label">
+                        SENTINELX INTELLIGENCE
+                    </p>
+
+                    <h2>
+                        Your security overview, at a glance.
+                    </h2>
+
+                    <p>
+                        Analyze request patterns and review detected
+                        threats in one place.
+                    </p>
+                </div>
+
+                <div class="shield-icon" aria-hidden="true">
+                    🛡️
+                </div>
+            </section>
+
+            <!-- Statistics -->
+            <section class="stats-grid" aria-label="Threat statistics">
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span>Total Events</span>
+                        <span class="stat-icon blue">▤</span>
+                    </div>
+
+                    <h2 id="totalEvents">0</h2>
+                    <p>Recorded requests</p>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span>High Severity</span>
+                        <span class="stat-icon red">⚠</span>
+                    </div>
+
+                    <h2 id="highEvents">0</h2>
+                    <p>High-risk events</p>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span>Medium Severity</span>
+                        <span class="stat-icon orange">◉</span>
+                    </div>
+
+                    <h2 id="mediumEvents">0</h2>
+                    <p>Events to review</p>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span>Low Severity</span>
+                        <span class="stat-icon green">✓</span>
+                    </div>
+
+                    <h2 id="lowEvents">0</h2>
+                    <p>Lower-risk events</p>
+                </article>
+
+            </section>
+
+            <!-- ================= ANALYZE REQUEST ================= -->
+            <section class="panel" id="analyzeThreat">
+
+                <div class="panel-header">
+                    <div>
+                        <p class="eyebrow">RULE-BASED ANALYSIS</p>
+
+                        <h2>Analyze a Request</h2>
+
+                        <p class="panel-description">
+                            Enter sample request details to evaluate
+                            suspicious activity.
+                        </p>
+                    </div>
+                </div>
+
+                <form id="analyzeForm">
+
+                    <div class="form-grid">
+
+                        <div class="form-field">
+                            <label for="ipAddress">
+                                IP Address
+                            </label>
+
+                            <input
+                                type="text"
+                                id="ipAddress"
+                                name="ipAddress"
+                                placeholder="192.168.1.50"
+                                required
+                                maxlength="45">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="requestPath">
+                                Request Path
+                            </label>
+
+                            <input
+                                type="text"
+                                id="requestPath"
+                                name="requestPath"
+                                placeholder="/login"
+                                required
+                                maxlength="200">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="failedLogins">
+                                Failed Logins
+                            </label>
+
+                            <input
+                                type="number"
+                                id="failedLogins"
+                                name="failedLogins"
+                                min="0"
+                                max="1000000"
+                                value="0"
+                                required>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="requestsPerMinute">
+                                Requests Per Minute
+                            </label>
+
+                            <input
+                                type="number"
+                                id="requestsPerMinute"
+                                name="requestsPerMinute"
+                                min="0"
+                                max="1000000"
+                                value="10"
+                                required>
+                        </div>
+
+                    </div>
+
+                    <div class="form-actions">
+                        <button
+                            type="submit"
+                            id="analyzeButton"
+                            class="primary-button">
+                            Analyze Request →
+                        </button>
+
+                        <button
+                            type="reset"
+                            class="secondary-button">
+                            Clear Form
+                        </button>
+                    </div>
+
+                </form>
+
+                <div
+                    id="analysisResult"
+                    class="analysis-result"
+                    role="status"
+                    aria-live="polite">
+                </div>
+
+            </section>
+
+            <!-- ================= THREAT HISTORY ================= -->
+            <section class="panel" id="threatHistory">
+
+                <div class="panel-header history-header">
+                    <div>
+                        <p class="eyebrow">EVENT LOG</p>
+
+                        <h2>Threat History</h2>
+
+                        <p class="panel-description">
+                            Review previously analyzed requests.
+                        </p>
+                    </div>
+
+                    <button
+                        type="button"
+                        id="refreshButton"
+                        class="secondary-button">
+                        ↻ Refresh Records
+                    </button>
+                </div>
+
+                <!-- Search and Filter -->
+                <div class="table-controls">
+
+                    <div class="search-box">
+                        <span aria-hidden="true">⌕</span>
+
+                        <input
+                            type="search"
+                            id="searchInput"
+                            placeholder="Search IP, path, or reason..."
+                            aria-label="Search threat records">
+                    </div>
+
+                    <select
+                        id="severityFilter"
+                        aria-label="Filter by severity">
+
+                        <option value="All">All Severities</option>
+                        <option value="High">High</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Low">Low</option>
+
+                    </select>
+
+                </div>
+
+                <!-- Threat Records Table -->
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>IP ADDRESS</th>
+                                <th>REQUEST PATH</th>
+                                <th>SCORE</th>
+                                <th>SEVERITY</th>
+                                <th>REASON</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="threatTableBody">
+                            <tr>
+                                <td colspan="6" class="empty-state">
+                                    Loading records...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Table Footer -->
+                <div class="table-footer">
+                    <span id="resultCount">
+                        Showing 0 records
+                    </span>
+
+                    <span>Data from SentinelX API</span>
+                </div>
+
+            </section>
+
+            <!-- ================= ABOUT ================= -->
+            <section class="about-section" id="about">
+
+                <h2>About SentinelX</h2>
+
+                <p>
+                    SentinelX is a cybersecurity mini-project that
+                    evaluates request details using configured detection
+                    rules, assigns threat scores, and stores analysis
+                    results for review.
+                </p>
+
+                <p class="disclaimer">
+                    Demo mode: submitted request details are simulated
+                    inputs. This dashboard does not automatically
+                    capture live network traffic.
+                </p>
+
+            </section>
+
+            <!-- Footer -->
+            <footer>
+                SentinelX Security Dashboard · Educational Demonstration
+            </footer>
+
+        </main>
+    </div>
+
+    <!-- Load JavaScript after the HTML elements -->
+    <script src="script.js"></script>
+
+</body>
+</html>

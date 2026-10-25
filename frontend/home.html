@@ -1,0 +1,1408 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0b1120">
+    <meta name="description" content="SentinelX is a cybersecurity threat analysis dashboard that helps identify suspicious request patterns and assess potential threats.">
+    <title>SentinelX | Cybersecurity Threat Intelligence</title>
+
+    <style>
+        :root {
+            --bg: #080e1b;
+            --surface: #101a2d;
+            --surface-light: #16243b;
+            --border: #263852;
+            --text: #eef4ff;
+            --muted: #9aaac2;
+            --blue: #60a5fa;
+            --purple: #a78bfa;
+            --green: #4ade80;
+            --red: #fb7185;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 90px;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: "Segoe UI", Arial, sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button, a {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button:focus-visible, a:focus-visible {
+            outline: 2px solid var(--blue);
+            outline-offset: 4px;
+        }
+
+        .container {
+            width: min(1160px, 90%);
+            margin: auto;
+        }
+
+        /* Navigation */
+
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(8, 14, 27, 0.92);
+            border-bottom: 1px solid rgba(96, 165, 250, 0.13);
+            backdrop-filter: blur(16px);
+        }
+
+        .nav-content {
+            min-height: 76px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            font-size: 23px;
+            font-weight: 800;
+            letter-spacing: -0.7px;
+        }
+
+        .brand-icon {
+            display: grid;
+            place-items: center;
+            width: 43px;
+            height: 43px;
+            border: 1px solid #3b82f6;
+            border-radius: 13px;
+            color: #bfdbfe;
+            background: linear-gradient(135deg, #1d4ed8, #312e81);
+            box-shadow: 0 0 25px #3b82f625;
+        }
+
+        .brand span {
+            color: var(--blue);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .nav-links > a:not(.btn) {
+            color: var(--muted);
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .nav-links > a:not(.btn):hover {
+            color: white;
+        }
+
+        .menu-toggle {
+            display: none;
+            padding: 8px 12px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: white;
+            font-size: 21px;
+            cursor: pointer;
+        }
+
+        /* Buttons */
+
+        .btn {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 9px;
+            padding: 12px 21px;
+            border: 1px solid transparent;
+            border-radius: 9px;
+            font-size: 14px;
+            font-weight: 700;
+            transition: transform 0.2s, background 0.2s, border-color 0.2s;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            color: white;
+            box-shadow: 0 8px 25px #3b82f62a;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2563eb, #4f46e5);
+        }
+
+        .btn-outline {
+            background: #101a2d;
+            color: var(--text);
+            border-color: #344762;
+        }
+
+        .btn-outline:hover {
+            background: #182640;
+            border-color: var(--blue);
+        }
+
+        /* Hero */
+
+        .hero {
+            position: relative;
+            isolation: isolate;
+            padding: 94px 0 85px;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            width: 520px;
+            height: 520px;
+            top: -190px;
+            left: -210px;
+            background: #2563eb;
+            filter: blur(180px);
+            opacity: 0.15;
+            z-index: -1;
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            right: -180px;
+            bottom: -180px;
+            background: #7c3aed;
+            filter: blur(190px);
+            opacity: 0.12;
+            z-index: -1;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.05fr 0.95fr;
+            align-items: center;
+            gap: 60px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 7px 12px;
+            margin-bottom: 24px;
+            color: #bfdbfe;
+            background: #172a46;
+            border: 1px solid #29476d;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.7px;
+            text-transform: uppercase;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--green);
+            border-radius: 50%;
+            box-shadow: 0 0 12px #4ade8080;
+        }
+
+        .hero h1 {
+            max-width: 650px;
+            margin-bottom: 22px;
+            font-size: clamp(42px, 5.3vw, 68px);
+            line-height: 1.09;
+            letter-spacing: -2.7px;
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #60a5fa, #a78bfa, #c4b5fd);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .hero-description {
+            max-width: 540px;
+            margin-bottom: 30px;
+            color: var(--muted);
+            font-size: 17px;
+            line-height: 1.9;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 13px;
+        }
+
+        .hero-note {
+            margin-top: 24px;
+            color: #8193ad;
+            font-size: 12px;
+        }
+
+        /* Dashboard preview */
+
+        .preview-wrap {
+            position: relative;
+        }
+
+        .preview-glow {
+            position: absolute;
+            inset: 10% 0;
+            background: #3b82f6;
+            filter: blur(100px);
+            opacity: 0.13;
+            z-index: -1;
+        }
+
+        .preview {
+            padding: 19px;
+            background: linear-gradient(145deg, #14223a, #0b1425);
+            border: 1px solid #344761;
+            border-radius: 18px;
+            box-shadow: 0 30px 80px #0005;
+            transform: rotateY(-3deg) rotateX(1deg);
+        }
+
+        .preview-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .preview-title {
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .preview-subtitle {
+            margin-top: 3px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .live-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--green);
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        .mini-stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+            margin: 17px 0;
+        }
+
+        .mini-stat {
+            min-width: 0;
+            padding: 14px 11px;
+            background: #0d192b;
+            border: 1px solid #243650;
+            border-radius: 10px;
+        }
+
+        .mini-stat-label {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .mini-stat-value {
+            margin-top: 7px;
+            font-size: 25px;
+            font-weight: 800;
+        }
+
+        .blue { color: var(--blue); }
+        .red { color: var(--red); }
+        .green { color: var(--green); }
+        .purple { color: var(--purple); }
+
+        .preview-section-title {
+            margin: 21px 0 11px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .threat-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 12px 10px;
+            margin-top: 8px;
+            background: #101c30;
+            border: 1px solid #263852;
+            border-radius: 8px;
+            font-size: 11px;
+        }
+
+        .threat-info {
+            min-width: 0;
+        }
+
+        .threat-name {
+            font-weight: 700;
+        }
+
+        .threat-detail {
+            margin-top: 4px;
+            color: var(--muted);
+            overflow-wrap: anywhere;
+        }
+
+        .threat-badge {
+            padding: 4px 8px;
+            border-radius: 5px;
+            font-size: 10px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .badge-high {
+            background: #3b1c2a;
+            color: #ff9eae;
+        }
+
+        .badge-medium {
+            background: #3a3019;
+            color: #fcd34d;
+        }
+
+        .badge-low {
+            background: #153126;
+            color: #86efac;
+        }
+
+        .preview-footer {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 17px;
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        /* Trust strip */
+
+        .trust-strip {
+            padding: 24px 0;
+            border-top: 1px solid #1c2b40;
+            border-bottom: 1px solid #1c2b40;
+            background: #0c1423;
+        }
+
+        .trust-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 28px;
+            color: #a9b8ce;
+            font-size: 13px;
+        }
+
+        .trust-item {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .trust-icon {
+            color: var(--blue);
+            font-size: 18px;
+        }
+
+        /* General sections */
+
+        section.content-section {
+            padding: 86px 0;
+        }
+
+        .section-heading {
+            max-width: 680px;
+            margin: 0 auto 45px;
+            text-align: center;
+        }
+
+        .section-kicker {
+            margin-bottom: 12px;
+            color: var(--blue);
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 1.6px;
+            text-transform: uppercase;
+        }
+
+        .section-heading h2 {
+            margin-bottom: 16px;
+            font-size: clamp(29px, 4vw, 42px);
+            line-height: 1.2;
+            letter-spacing: -1.1px;
+        }
+
+        .section-heading p {
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.9;
+        }
+
+        /* Feature cards */
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            padding: 26px;
+            background: linear-gradient(145deg, #121e32, #0e1728);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            transition: transform 0.25s, border-color 0.25s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: #4a6c9a;
+        }
+
+        .feature-icon {
+            display: grid;
+            place-items: center;
+            width: 50px;
+            height: 50px;
+            margin-bottom: 22px;
+            background: #1b3150;
+            border: 1px solid #2a4a75;
+            border-radius: 13px;
+            color: #93c5fd;
+            font-size: 23px;
+        }
+
+        .feature-card:nth-child(2) .feature-icon {
+            background: #302345;
+            border-color: #584079;
+            color: #c4b5fd;
+        }
+
+        .feature-card:nth-child(3) .feature-icon {
+            background: #153329;
+            border-color: #275641;
+            color: #86efac;
+        }
+
+        .feature-card:nth-child(4) .feature-icon {
+            background: #39242a;
+            border-color: #70404a;
+            color: #fda4af;
+        }
+
+        .feature-card:nth-child(5) .feature-icon {
+            background: #382f1b;
+            border-color: #655127;
+            color: #fcd34d;
+        }
+
+        .feature-card:nth-child(6) .feature-icon {
+            background: #1d3040;
+            border-color: #35586b;
+            color: #7dd3fc;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 10px;
+            font-size: 17px;
+        }
+
+        .feature-card p {
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.9;
+        }
+
+        /* How it works */
+
+        .how-section {
+            background: #0c1423;
+            border-top: 1px solid #1b2b41;
+            border-bottom: 1px solid #1b2b41;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 28px;
+        }
+
+        .step-card {
+            position: relative;
+            padding: 27px;
+            background: #101a2d;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+        }
+
+        .step-number {
+            display: grid;
+            place-items: center;
+            width: 42px;
+            height: 42px;
+            margin-bottom: 21px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #2563eb, #6d5ae6);
+            color: white;
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .step-card h3 {
+            margin-bottom: 10px;
+            font-size: 17px;
+        }
+
+        .step-card p {
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.9;
+        }
+
+        /* About */
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 55px;
+            align-items: center;
+        }
+
+        .about-copy h2 {
+            margin-bottom: 20px;
+            font-size: clamp(29px, 4vw, 40px);
+            line-height: 1.2;
+            letter-spacing: -1px;
+        }
+
+        .about-copy > p {
+            margin-bottom: 22px;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 2;
+        }
+
+        .check-list {
+            display: grid;
+            gap: 13px;
+            margin: 24px 0 29px;
+            list-style: none;
+        }
+
+        .check-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 11px;
+            color: #dbe7f8;
+            font-size: 14px;
+        }
+
+        .check {
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #153126;
+            color: var(--green);
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .about-visual {
+            padding: 25px;
+            background: linear-gradient(145deg, #14233b, #0e1728);
+            border: 1px solid #314660;
+            border-radius: 16px;
+        }
+
+        .about-visual h3 {
+            margin-bottom: 20px;
+            font-size: 17px;
+        }
+
+        .score-item {
+            margin-bottom: 21px;
+        }
+
+        .score-label {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 9px;
+            color: #c6d4e8;
+            font-size: 12px;
+        }
+
+        .score-track {
+            height: 7px;
+            overflow: hidden;
+            background: #26354b;
+            border-radius: 20px;
+        }
+
+        .score-fill {
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+        }
+
+        .score-note {
+            padding: 12px;
+            background: #0b1526;
+            border: 1px solid #263852;
+            border-radius: 8px;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.8;
+        }
+
+        /* CTA */
+
+        .cta-section {
+            padding: 20px 0 90px;
+        }
+
+        .cta-box {
+            position: relative;
+            padding: 57px 30px;
+            overflow: hidden;
+            text-align: center;
+            background: linear-gradient(125deg, #132b4b, #1b2043 65%, #25204b);
+            border: 1px solid #38527c;
+            border-radius: 18px;
+        }
+
+        .cta-box::before,
+        .cta-box::after {
+            content: "";
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            border: 1px solid #93c5fd20;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .cta-box::before {
+            top: -90px;
+            left: -55px;
+        }
+
+        .cta-box::after {
+            right: -55px;
+            bottom: -100px;
+        }
+
+        .cta-box h2 {
+            margin-bottom: 15px;
+            font-size: clamp(27px, 4vw, 40px);
+            letter-spacing: -0.9px;
+        }
+
+        .cta-box p {
+            max-width: 590px;
+            margin: 0 auto 25px;
+            color: #c0cce0;
+            font-size: 14px;
+            line-height: 1.9;
+        }
+
+        .cta-box .btn {
+            background: white;
+            color: #14213a;
+        }
+
+        .cta-box .btn:hover {
+            background: #dbeafe;
+        }
+
+        /* Footer */
+
+        footer {
+            padding: 29px 0;
+            border-top: 1px solid #1c2b40;
+            background: #070c17;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 18px;
+        }
+
+        .footer-brand {
+            font-size: 17px;
+            font-weight: 800;
+        }
+
+        .footer-brand span {
+            color: var(--blue);
+        }
+
+        .footer-copy {
+            color: #8494ac;
+            font-size: 12px;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        /* Responsive design */
+
+        @media (max-width: 900px) {
+            .hero {
+                padding: 70px 0;
+            }
+
+            .hero-grid {
+                grid-template-columns: 1fr;
+                gap: 45px;
+            }
+
+            .hero-copy {
+                max-width: 720px;
+            }
+
+            .preview-wrap {
+                max-width: 650px;
+                width: 100%;
+                margin: auto;
+            }
+
+            .features-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .steps-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .about-grid {
+                grid-template-columns: 1fr;
+                gap: 35px;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .nav-content {
+                min-height: 68px;
+            }
+
+            .brand {
+                font-size: 21px;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .nav-links {
+                position: absolute;
+                top: 68px;
+                left: 0;
+                right: 0;
+                display: none;
+                align-items: stretch;
+                flex-direction: column;
+                gap: 0;
+                padding: 15px 5%;
+                background: #0c1423;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .nav-links.open {
+                display: flex;
+            }
+
+            .nav-links > a {
+                padding: 12px 0;
+            }
+
+            .nav-links > .btn {
+                margin-top: 8px;
+            }
+
+            .hero {
+                padding: 57px 0;
+            }
+
+            .hero h1 {
+                font-size: clamp(39px, 11vw, 55px);
+                letter-spacing: -1.8px;
+            }
+
+            .hero-description {
+                font-size: 15px;
+            }
+
+            .hero-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .hero-actions .btn {
+                width: 100%;
+            }
+
+            .preview {
+                padding: 13px;
+                transform: none;
+            }
+
+            .mini-stats {
+                gap: 6px;
+            }
+
+            .mini-stat {
+                padding: 10px 7px;
+            }
+
+            .mini-stat-value {
+                font-size: 21px;
+            }
+
+            section.content-section {
+                padding: 65px 0;
+            }
+
+            .section-heading {
+                margin-bottom: 30px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-card,
+            .step-card {
+                padding: 22px;
+            }
+
+            .trust-content {
+                gap: 16px 22px;
+                justify-content: flex-start;
+            }
+
+            .cta-section {
+                padding-bottom: 60px;
+            }
+
+            .cta-box {
+                padding: 42px 20px;
+            }
+
+            .footer-content {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <header class="navbar">
+        <div class="container nav-content">
+            <a href="home.html" class="brand" aria-label="SentinelX home">
+                <span class="brand-icon" aria-hidden="true">⬡</span>
+                Sentinel<span>X</span>
+            </a>
+
+            <button class="menu-toggle" id="menuToggle"
+                    type="button" aria-label="Open navigation"
+                    aria-expanded="false" aria-controls="navLinks">
+                ☰
+            </button>
+
+            <nav class="nav-links" id="navLinks" aria-label="Main navigation">
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#about">About</a>
+                <a href="index.html" class="btn btn-primary">Open Dashboard ↗</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero section -->
+        <section class="hero">
+            <div class="container hero-grid">
+                <div class="hero-copy">
+                    <div class="eyebrow">
+                        <span class="pulse-dot"></span>
+                        Cybersecurity Threat Analysis
+                    </div>
+
+                    <h1>
+                        Detect Threats.<br>
+                        <span class="gradient-text">Protect Systems.</span>
+                    </h1>
+
+                    <p class="hero-description">
+                        Meet SentinelX, a cybersecurity mini-project designed
+                        to analyze request patterns, identify suspicious
+                        activity, and help you understand potential security
+                        threats through a clear, interactive dashboard.
+                    </p>
+
+                    <div class="hero-actions">
+                        <a href="index.html" class="btn btn-primary">
+                            Launch Dashboard <span>→</span>
+                        </a>
+
+                        <a href="#features" class="btn btn-outline">
+                            Explore Features ↓
+                        </a>
+                    </div>
+
+                    <p class="hero-note">
+                        Designed for learning, threat analysis, and security
+                        monitoring demonstrations.
+                    </p>
+                </div>
+
+                <!-- Illustrative dashboard preview -->
+                <div class="preview-wrap">
+                    <div class="preview-glow"></div>
+
+                    <div class="preview">
+                        <div class="preview-top">
+                            <div>
+                                <div class="preview-title">SentinelX Overview</div>
+                                <div class="preview-subtitle">
+                                    Threat monitoring preview
+                                </div>
+                            </div>
+
+                            <span class="live-label">
+                                <span class="pulse-dot"></span>
+                                DEMO
+                            </span>
+                        </div>
+
+                        <div class="mini-stats">
+                            <div class="mini-stat">
+                                <div class="mini-stat-label">Events</div>
+                                <div class="mini-stat-value blue">128</div>
+                            </div>
+
+                            <div class="mini-stat">
+                                <div class="mini-stat-label">High Risk</div>
+                                <div class="mini-stat-value red">08</div>
+                            </div>
+
+                            <div class="mini-stat">
+                                <div class="mini-stat-label">Low Risk</div>
+                                <div class="mini-stat-value green">96</div>
+                            </div>
+                        </div>
+
+                        <div class="preview-section-title">
+                            Example Threat Events
+                        </div>
+
+                        <div class="threat-row">
+                            <div class="threat-info">
+                                <div class="threat-name">Repeated Failed Logins</div>
+                                <div class="threat-detail">
+                                    Example: 192.0.2.10
+                                </div>
+                            </div>
+                            <span class="threat-badge badge-high">HIGH</span>
+                        </div>
+
+                        <div class="threat-row">
+                            <div class="threat-info">
+                                <div class="threat-name">High Request Rate</div>
+                                <div class="threat-detail">
+                                    Example: 198.51.100.15
+                                </div>
+                            </div>
+                            <span class="threat-badge badge-medium">MEDIUM</span>
+                        </div>
+
+                        <div class="threat-row">
+                            <div class="threat-info">
+                                <div class="threat-name">Normal Request Pattern</div>
+                                <div class="threat-detail">
+                                    Example: 203.0.113.20
+                                </div>
+                            </div>
+                            <span class="threat-badge badge-low">LOW</span>
+                        </div>
+
+                        <div class="preview-footer">
+                            <span class="pulse-dot"></span>
+                            Illustrative data — not live network traffic
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Project highlights -->
+        <section class="trust-strip">
+            <div class="container trust-content">
+                <div class="trust-item">
+                    <span class="trust-icon">◈</span>
+                    Rule-Based Detection
+                </div>
+                <div class="trust-item">
+                    <span class="trust-icon">▤</span>
+                    Event Logging
+                </div>
+                <div class="trust-item">
+                    <span class="trust-icon">◎</span>
+                    Risk Classification
+                </div>
+                <div class="trust-item">
+                    <span class="trust-icon">⌘</span>
+                    Interactive Dashboard
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="content-section" id="features">
+            <div class="container">
+                <div class="section-heading">
+                    <div class="section-kicker">Core Capabilities</div>
+                    <h2>Security insights, <span class="gradient-text">made simpler.</span></h2>
+                    <p>
+                        SentinelX brings essential threat-analysis concepts
+                        into one interface, helping users examine request
+                        events and understand why an event may be suspicious.
+                    </p>
+                </div>
+
+                <div class="features-grid">
+                    <article class="feature-card">
+                        <div class="feature-icon">⌕</div>
+                        <h3>Threat Detection</h3>
+                        <p>
+                            Apply predefined rules to identify suspicious
+                            patterns, including repeated failed logins and
+                            unusually high request rates.
+                        </p>
+                    </article>
+
+                    <article class="feature-card">
+                        <div class="feature-icon">◉</div>
+                        <h3>Risk Scoring</h3>
+                        <p>
+                            Assign a risk score to analyzed events and classify
+                            them into High, Medium, or Low severity categories.
+                        </p>
+                    </article>
+
+                    <article class="feature-card">
+                        <div class="feature-icon">▥</div>
+                        <h3>Security Dashboard</h3>
+                        <p>
+                            View event summaries, severity counts, and recorded
+                            threat events in a single dashboard interface.
+                        </p>
+                    </article>
+
+                    <article class="feature-card">
+                        <div class="feature-icon">⚑</div>
+                        <h3>Threat Alerts</h3>
+                        <p>
+                            Present high-severity findings in a dedicated
+                            alert panel so important results are easier to
+                            review.
+                        </p>
+                    </article>
+
+                    <article class="feature-card">
+                        <div class="feature-icon">▣</div>
+                        <h3>Event History</h3>
+                        <p>
+                            Keep a record of analyzed events for reviewing
+                            results and demonstrating the detection workflow.
+                        </p>
+                    </article>
+
+                    <article class="feature-card">
+                        <div class="feature-icon">⌘</div>
+                        <h3>Simple Interface</h3>
+                        <p>
+                            Use a clean, responsive interface designed to make
+                            cybersecurity concepts more accessible to students
+                            and beginners.
+                        </p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- How it works -->
+        <section class="content-section how-section" id="how-it-works">
+            <div class="container">
+                <div class="section-heading">
+                    <div class="section-kicker">The Workflow</div>
+                    <h2>How SentinelX works</h2>
+                    <p>
+                        Explore the basic workflow used by this project to
+                        examine request events and display a threat assessment.
+                    </p>
+                </div>
+
+                <div class="steps-grid">
+                    <article class="step-card">
+                        <div class="step-number">01</div>
+                        <h3>Submit an Event</h3>
+                        <p>
+                            Enter event details such as an IP address, request
+                            path, failed login count, and requests per minute
+                            through the dashboard form.
+                        </p>
+                    </article>
+
+                    <article class="step-card">
+                        <div class="step-number">02</div>
+                        <h3>Analyze the Request</h3>
+                        <p>
+                            The C++ detection logic evaluates the submitted
+                            values against predefined rules and calculates a
+                            risk score.
+                        </p>
+                    </article>
+
+                    <article class="step-card">
+                        <div class="step-number">03</div>
+                        <h3>Review the Result</h3>
+                        <p>
+                            View the severity classification and recorded
+                            event details in the dashboard to understand the
+                            result of the analysis.
+                        </p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- About -->
+        <section class="content-section" id="about">
+            <div class="container about-grid">
+                <div class="about-copy">
+                    <div class="section-kicker">About the Project</div>
+
+                    <h2>
+                        Understand the signals behind
+                        <span class="gradient-text">potential threats.</span>
+                    </h2>
+
+                    <p>
+                        SentinelX is a learning-oriented cybersecurity
+                        project that demonstrates how request information
+                        can be evaluated using rule-based detection. It
+                        connects a web interface with a C++ backend and
+                        supports the review of analyzed events.
+                    </p>
+
+                    <ul class="check-list">
+                        <li>
+                            <span class="check">✓</span>
+                            <span>Rule-based event analysis using C++</span>
+                        </li>
+                        <li>
+                            <span class="check">✓</span>
+                            <span>Risk scoring and severity classification</span>
+                        </li>
+                        <li>
+                            <span class="check">✓</span>
+                            <span>Web interface built with HTML, CSS, and JavaScript</span>
+                        </li>
+                        <li>
+                            <span class="check">✓</span>
+                            <span>Backend event handling and storage integration</span>
+                        </li>
+                    </ul>
+
+                    <a href="index.html" class="btn btn-primary">
+                        Explore the Dashboard →
+                    </a>
+                </div>
+
+                <div class="about-visual">
+                    <h3>Example Risk Assessment</h3>
+
+                    <div class="score-item">
+                        <div class="score-label">
+                            <span>Repeated failed logins</span>
+                            <span class="red">+40</span>
+                        </div>
+                        <div class="score-track">
+                            <div class="score-fill" style="width: 40%"></div>
+                        </div>
+                    </div>
+
+                    <div class="score-item">
+                        <div class="score-label">
+                            <span>High request rate</span>
+                            <span class="purple">+35</span>
+                        </div>
+                        <div class="score-track">
+                            <div class="score-fill" style="width: 35%"></div>
+                        </div>
+                    </div>
+
+                    <div class="score-item">
+                        <div class="score-label">
+                            <span>Invalid request path</span>
+                            <span class="blue">+20</span>
+                        </div>
+                        <div class="score-track">
+                            <div class="score-fill" style="width: 20%"></div>
+                        </div>
+                    </div>
+
+                    <div class="score-note">
+                        <strong>Illustrative example:</strong> Scores are
+                        assigned by the project's predefined detection rules.
+                        This visualization is not connected to live data or
+                        the actual backend calculation.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to action -->
+        <section class="cta-section">
+            <div class="container">
+                <div class="cta-box">
+                    <h2>Ready to explore SentinelX?</h2>
+                    <p>
+                        Open the dashboard, submit a sample request event,
+                        and explore how rule-based threat analysis works.
+                    </p>
+                    <a href="index.html" class="btn">
+                        Open SentinelX Dashboard →
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-content">
+            <a href="home.html" class="footer-brand">
+                Sentinel<span>X</span>
+            </a>
+
+            <p class="footer-copy">
+                © <span id="currentYear"></span> SentinelX.
+                Cybersecurity learning project.
+            </p>
+
+            <div class="footer-links">
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="index.html">Dashboard</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const menuToggle = document.getElementById("menuToggle");
+        const navLinks = document.getElementById("navLinks");
+
+        menuToggle.addEventListener("click", function () {
+            const isOpen = navLinks.classList.toggle("open");
+            menuToggle.setAttribute("aria-expanded", String(isOpen));
+            menuToggle.setAttribute(
+                "aria-label",
+                isOpen ? "Close navigation" : "Open navigation"
+            );
+            menuToggle.textContent = isOpen ? "✕" : "☰";
+        });
+
+        navLinks.querySelectorAll("a").forEach(function (link) {
+            link.addEventListener("click", function () {
+                navLinks.classList.remove("open");
+                menuToggle.setAttribute("aria-expanded", "false");
+                menuToggle.setAttribute("aria-label", "Open navigation");
+                menuToggle.textContent = "☰";
+            });
+        });
+
+        document.getElementById("currentYear").textContent =
+            new Date().getFullYear();
+    </script>
+
+</body>
+</html>

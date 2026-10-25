@@ -1,0 +1,10 @@
+*.exe
+*.o
+*.db
+*.sqlite
+*.sqlite3
+logs/
+reports/
+tests/
+.vscode/
+.env

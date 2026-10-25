@@ -1,0 +1,188 @@
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+
+    width: 245px;
+    height: 100vh;
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+
+    scrollbar-width: thin;
+    scrollbar-color: #475569 #0e1729;
+
+    z-index: 100;
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 7px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 8px;
+}
+
+/* ===== Threat alerts panel ===== */
+
+.sidebar .sentinel-alert-panel {
+    position: relative;
+    inset: auto;
+
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 auto;
+
+    width: 100%;
+    height: 300px;
+    max-height: 40vh;
+    min-height: 180px;
+
+    box-sizing: border-box;
+    margin: 18px 0 14px;
+    padding: 12px;
+
+    overflow: hidden;
+
+    background: #111c30;
+    color: #edf3ff;
+    border: 1px solid #25334a;
+    border-radius: 10px;
+}
+
+.sidebar .sentinel-alert-heading {
+    flex: 0 0 auto;
+    margin: 0 0 8px;
+    font-size: 15px;
+    color: #edf3ff;
+}
+
+.sidebar .sentinel-alert-status {
+    flex: 0 0 auto;
+    margin: 0 0 10px;
+    font-size: 12px;
+    color: #9aa9c0;
+}
+
+/* The alert cards scroll independently */
+.sidebar .sentinel-alert-list {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+
+    flex: 1 1 0;
+    height: 0;
+    min-height: 0;
+    width: 100%;
+
+    box-sizing: border-box;
+    padding-right: 5px;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior-y: contain;
+
+    scrollbar-width: thin;
+    scrollbar-color: #64748b #111c30;
+}
+
+.sidebar .sentinel-alert-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar .sentinel-alert-list::-webkit-scrollbar-thumb {
+    background: #64748b;
+    border-radius: 8px;
+}
+
+/* Individual alert cards */
+.sidebar .sentinel-alert-card {
+    flex: 0 0 auto;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+
+    padding: 10px;
+    overflow-wrap: anywhere;
+
+    background: #1a2233;
+    border: 1px solid #753047;
+    border-left: 4px solid #ff647c;
+    border-radius: 8px;
+}
+
+.sidebar .sentinel-alert-card-title {
+    margin: 0 0 8px;
+    color: #ff8295;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.sidebar .sentinel-alert-card-details {
+    margin: 0 0 8px;
+    color: #edf3ff;
+    font-size: 12px;
+    line-height: 1.6;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+}
+
+.sidebar .sentinel-alert-card-footer {
+    margin: 0 0 8px;
+    color: #ff9eae;
+    font-size: 11px;
+}
+
+.sidebar .sentinel-alert-dismiss {
+    padding: 6px 9px;
+    background: #25334a;
+    color: #edf3ff;
+    border: 1px solid #40516b;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Keep the status at the bottom */
+.sidebar .sidebar-bottom {
+    flex: 0 0 auto;
+    margin-top: auto;
+}
+
+/* Keep dashboard content beside the sidebar */
+.main-content {
+    margin-left: 245px;
+}
+
+/* Mobile layout */
+@media (max-width: 700px) {
+    .sidebar {
+        position: relative;
+        top: auto;
+        left: auto;
+        bottom: auto;
+
+        width: 100%;
+        height: auto;
+
+        overflow: visible;
+    }
+
+    .sidebar .sentinel-alert-panel {
+        height: 280px;
+        max-height: 280px;
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+}
