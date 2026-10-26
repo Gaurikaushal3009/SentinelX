@@ -119,6 +119,7 @@ function escapeHTML(value) {
     });
 }
 
+
 function setConnectionStatus(connected, message) {
     if (!connectionStatus) return;
 
@@ -134,37 +135,18 @@ function setConnectionStatus(connected, message) {
         );
     }
 
-    // Preserve the status dot and update only the text.
-    let textNode = Array.from(connectionStatus.childNodes).find(
-        node => node.nodeType === Node.TEXT_NODE
+    // Remove old text and create exactly one status message.
+    Array.from(connectionStatus.childNodes).forEach(function (node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+            node.remove();
+        }
+    });
+
+    connectionStatus.appendChild(
+        document.createTextNode(" " + message)
     );
-
-    if (!textNode) {
-        textNode = document.createTextNode("");
-        connectionStatus.appendChild(textNode);
-    }
-
-    textNode.textContent = " " + message;
 }
 
-function getThreatScore(threat) {
-    return Number(threat.threat_score ?? threat.score) || 0;
-}
-
-function getThreatKey(threat) {
-    if (threat.id !== undefined && threat.id !== null) {
-        return "id:" + threat.id;
-    }
-
-    return JSON.stringify([
-        threat.ip ?? threat.ip_address,
-        threat.path ?? threat.request_path,
-        getThreatScore(threat),
-        threat.severity,
-        threat.created_at ?? threat.createdAt ?? "",
-        threat.reason
-    ]);
-}
 
 function getSeverityClass(severity) {
     const value = String(severity || "").toLowerCase();
