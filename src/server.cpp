@@ -30,6 +30,9 @@ std::string jsonEscape(const std::string& input) {
             case '\n': output += "\\n";  break;
             case '\r': output += "\\r";  break;
             case '\t': output += "\\t";  break;
+            case '\b': output += "\\b";  break;
+            case '\f': output += "\\f";  break;
+
             default:
                 if (c < 0x20) {
                     output += ' ';
@@ -170,6 +173,7 @@ std::string getThreats() {
 
         auto textColumn = [&](int column) -> std::string {
             const unsigned char* text = sqlite3_column_text(stmt, column);
+
             return text
                 ? reinterpret_cast<const char*>(text)
                 : "";
@@ -218,11 +222,11 @@ int main() {
 
     httplib::Server server;
 
-    // Homepage.
+    // Homepage: open the SentinelX dashboard.
     server.Get("/", [](const httplib::Request&,
-                       httplib::Response& response) {
-        response.set_redirect("/home.html");
-    });
+                   httplib::Response& response) {
+    response.set_redirect("/home.html");
+});
 
     // Health check.
     server.Get("/api/health", [](const httplib::Request&,
@@ -334,7 +338,7 @@ int main() {
     }
 
     std::cout << "Frontend: http://0.0.0.0:" << port << "\n";
-    std::cout << "Homepage: /home.html\n";
+    std::cout << "Homepage: /index.html\n";
     std::cout << "Dashboard: /index.html\n";
     std::cout << "Health API: /api/health\n";
     std::cout << "Threat API: /api/threats\n";
