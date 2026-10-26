@@ -222,12 +222,6 @@ int main() {
 
     httplib::Server server;
 
-    // Homepage: open the SentinelX dashboard.
-    server.Get("/", [](const httplib::Request&,
-                   httplib::Response& response) {
-    response.set_redirect("/home.html");
-});
-
     // Health check.
     server.Get("/api/health", [](const httplib::Request&,
                                  httplib::Response& response) {
@@ -315,6 +309,12 @@ int main() {
         return 1;
     }
 
+    // Register the explicit homepage route after mounting static files.
+    server.Get("/", [](const httplib::Request&,
+                       httplib::Response& response) {
+        response.set_redirect("/home.html");
+    });
+
     // Render provides PORT; local development defaults to 8080.
     const char* portText = std::getenv("PORT");
     int port = 8080;
@@ -338,7 +338,7 @@ int main() {
     }
 
     std::cout << "Frontend: http://0.0.0.0:" << port << "\n";
-    std::cout << "Homepage: /index.html\n";
+    std::cout << "Homepage: /home.html\n";
     std::cout << "Dashboard: /index.html\n";
     std::cout << "Health API: /api/health\n";
     std::cout << "Threat API: /api/threats\n";
