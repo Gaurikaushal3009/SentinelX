@@ -289,79 +289,75 @@
                     <div>
                         <p class="eyebrow">EVENT LOG</p>
 
-                        <h2>Threat History</h2>
-
-                        <p class="panel-description">
-                            Review previously analyzed requests.
-                        </p>
-                    </div>
-
-                    <button
-                        type="button"
-                        id="refreshButton"
-                        class="secondary-button">
-                        ↻ Refresh Records
-                    </button>
-                </div>
-
-                <!-- Search and Filter -->
-                <div class="table-controls">
-
-                    <div class="search-box">
-                        <span aria-hidden="true">⌕</span>
-
-                        <input
-                            type="search"
-                            id="searchInput"
-                            placeholder="Search IP, path, or reason..."
-                            aria-label="Search threat records">
-                    </div>
-
-                    <select
-                        id="severityFilter"
-                        aria-label="Filter by severity">
-
-                        <option value="All">All Severities</option>
-                        <option value="High">High</option>
-                        <option value="Medium">Medium</option>
-                        <option value="Low">Low</option>
-
-                    </select>
-
-                </div>
-
                 <!-- Threat Records Table -->
-                <div class="table-wrapper">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>IP ADDRESS</th>
-                                <th>REQUEST PATH</th>
-                                <th>SCORE</th>
-                                <th>SEVERITY</th>
-                                <th>REASON</th>
-                            </tr>
-                        </thead>
+                
+<!-- =====================================
+     SENTINELX THREAT RECORDS
+===================================== -->
 
-                        <tbody id="threatTableBody">
-                            <tr>
-                                <td colspan="6" class="empty-state">
-                                    Loading records...
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+<section class="records-section">
+
+    <div class="records-header">
+        <div>
+            <h2>Threat Records</h2>
+            <p>Monitor and review detected security threats.</p>
+        </div>
+
+        <button id="refreshButton" type="button">
+            ↻ Refresh Records
+        </button>
+    </div>
+
+    <div class="records-controls">
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Search IP address, path or reason..."
+        >
+
+        <select id="severityFilter">
+            <option value="all">All Severities</option>
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+        </select>
+    </div>
+
+    <div class="records-count" id="resultCount">
+        Loading records...
+    </div>
+
+    <div class="table-container">
+        <table class="threat-records-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>IP Address</th>
+                    <th>Request Path</th>
+                    <th>Threat Score</th>
+                    <th>Severity</th>
+                    <th>Reason</th>
+                </tr>
+            </thead>
+
+            <tbody id="threatTableBody">
+                <tr>
+                    <td colspan="6" class="empty-state">
+                        Loading threat records...
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</section>
 
                 <!-- Table Footer -->
                 <div class="table-footer">
-                    <span id="resultCount">
-                        Showing 0 records
-                    </span>
-
-                    <span>Data from SentinelX API</span>
-                </div>
+    <span id="tableFooterInfo">
+        Data from SentinelX API
+    </span>
+</div>
 
             </section>
 
@@ -394,7 +390,7 @@
     </div>
 
     <!-- Load JavaScript after the HTML elements -->
-    <script src="script.js"></script>
+    <script src="/script.js?v=5" defer></script>
 
 </body>
 </html>
